@@ -2,9 +2,9 @@ import unittest
 import pandas as pd
 import sys, os
 
-sys.path.append(os.path.abspath(os.path.join("../..")))
 import json
 
+sys.path.append(os.path.abspath(os.path.join("/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/")))
 from extract_dataframe import read_json
 from extract_dataframe import TweetDfExtractor
 
@@ -48,9 +48,9 @@ class TestTweetDfExtractor(unittest.TestCase):
 	"""
 
     def setUp(self) -> pd.DataFrame:
-        self.df = TweetDfExtractor(tweet_list[:1])
+        self.df = TweetDfExtractor(tweet_list[:5])
         # tweet_df = self.df.get_tweet_df()
-        '''
+        
     def test_find_statuses_count(self):
         statuses_count = [8097,5831,1627,1627,18958]
         self.assertEqual(
@@ -58,8 +58,8 @@ class TestTweetDfExtractor(unittest.TestCase):
 
     def test_find_sentiments(self):
         subjectivity = [0.190625 , 0.1 , 0.0 , 0.35 , 0.55625 ]
-        polarity = [-0.125 , -0.1 , 0.0 , 0.1 , -6.938893903907228E-18 ] 
-        self.assertEqual(self.df.find_sentiments(self.df.find_full_text()), (polarity,subjectivity) )  
+        polarity = [-0.125 , -0.1 , 0.0 , 0.1 , -6.93889390390722E-18 ] 
+        self.assertAlmostEqual(self.df.find_sentiments(self.df.find_full_text()), (polarity,subjectivity),places=8 )  
         
     def test_find_followers_count(self):
         followers_count = [20497 , 65 , 85 , 85 , 910 ] #<provide a list of the first five follower counts>
@@ -80,27 +80,11 @@ class TestTweetDfExtractor(unittest.TestCase):
         sensitive = ['' , '' , '' , '' , '' ]
         self.assertEqual(self.df.is_sensitive(), sensitive)
         
-        '''
-    def test_find_hashtags(self):
-        hashtags = [ [{'text': 'City', 'indices': [132, 137]}] , [[{'text': 'China', 'indices': [18, 24]}], [{'text': 'Taiwan', 'indices': [98, 105]}]] , [{'text': 'XiJinping', 'indices': [127, 137]}] , [{'text': 'XiJinping', 'indices': [9, 19]}] ,[] ]
-
-        self.assertEqual(self.df.find_hashtags(), hashtags  )
-'''
+        
     def test_find_full_text(self):
-        text = ['RT @i_ameztoy: Extra random image (I): Lets focus in one very specific zone of the western coast -&gt; Longjing District, Taichung #City, #Ta…' , 'RT @IndoPac_Info: #China\'s media explains the military reasons for each area of the drills in the #Taiwan Strait Read the labels in the pi…' , 'China even cut off communication, they don\'t anwer phonecalls from the US. But here clown @ZelenskyyUa enters the stage to ask #XiJinping to change Putin\'s mind.' , 'Putin to #XiJinping : I told you my friend, Taiwan will be a vassal state, including nukes, much like the Ukrainian model. I warned you... But it took Pelosi to open China\'s eyes.' , 'RT @ChinaUncensored: I’m sorry, I thought Taiwan was an independent country because it had its own government, currency, military, travel d…' , '' ]
+        text = ['rt extra random image i lets focus in one very specific zone of the western coast gt longjing district taichung','rt media explains the military reasons for each area of the drills in the strait read the labels in the pi','china even cut off communication they dont anwer phonecalls from the us but here clown enters the stage to ask to change putins mind','putin to i told you my friend taiwan will be a vassal state including nukes much like the ukrainian model i warned you but it took pelosi to open chinas eyes','rt i m sorry i thought taiwan was an independent country because it had its own government currency military travel d']
 
         self.assertEqual(self.df.find_full_text(), text)
-
-
-
-
-
-
-    def test_find_mentions(self):
-        mentions = [ [{'screen_name': 'i_ameztoy', 'name': 'Iban Ameztoy', 'id': 3418339671, 'id_str': '3418339671', 'indices': [3, 13]}], [{'screen_name': 'IndoPac_Info', 'name': 'Indo-Pacific News - Watching the CCP-China Threat', 'id': 844136511079559168, 'id_str': '844136511079559168', 'indices': [3, 16]}] , [{'screen_name': 'ZelenskyyUa', 'name': 'Володимир Зеленський', 'id': 1120633726478823425, 'id_str': '1120633726478823425', 'indices': [90, 102]}] , [] , [{'screen_name': 'ChinaUncensored', 'name': 'China Uncensored', 'id': 833100331, 'id_str': '833100331', 'indices': [3, 19]}] ]
-        self.assertEqual(self.df.find_mentions(), mentions)
-'''
-
 
 if __name__ == "__main__":
     	unittest.main()
