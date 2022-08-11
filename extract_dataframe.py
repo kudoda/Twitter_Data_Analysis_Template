@@ -1,6 +1,8 @@
 import json
 import pandas as pd
 from textblob import TextBlob
+import numpy as np
+import re
 
 
 def read_json(json_file: str)->list:
@@ -54,6 +56,32 @@ class TweetDfExtractor:
        	Return: the tweets text 
 	"""
         text = [X['full_text'] for X in self.tweets_list]
+	#################
+	
+        
+        def clean_tweet(tweet):
+                if type(tweet) == np.float:
+                        return ""
+                temp = tweet.lower()
+                temp = re.sub("'", "", temp) # to avoid removing contractions in english
+                temp = re.sub("@[A-Za-z0-9_]+","", temp)
+                temp = re.sub("#[A-Za-z0-9_]+","", temp)
+                temp = re.sub(r'http\S+', '', temp)
+                temp = re.sub('[()!?]', ' ', temp)
+                temp = re.sub('\[.*?\]',' ', temp)
+                temp = re.sub("[^a-z0-9]"," ", temp)
+                temp = temp.split()
+                #temp = [w for w in temp if not w in stopwords]
+                temp = " ".join(word for word in temp)
+                return temp
+
+       # tweets = [""]
+
+        text = [clean_tweet(tw) for tw in text]
+        #results
+        
+        
+        ##################
         return text
     
     def find_sentiments(self, text)->list:
@@ -139,6 +167,29 @@ class TweetDfExtractor:
         """
         hashtags = [X['entities']['hashtags'] if 'entities' in X.keys() 
 	else '' for X in self.tweets_list]
+        '''
+	##################
+       	def clean_hashtags(hasha):
+                if type(hasha) == np.float:
+                        return ""
+                temp = hasha.lower()
+                temp = re.sub("'", "", temp) # to avoid removing contractions in english
+                temp = re.sub("@[A-Za-z0-9_]+","", temp)
+                temp = re.sub("#[A-Za-z0-9_]+","", temp)
+                temp = re.sub(r'http\S+', '', temp)
+                temp = re.sub('[()!?]', ' ', temp)
+                temp = re.sub('\[.*?\]',' ', temp)
+                temp = re.sub("[^a-z0-9]"," ", temp)
+                temp = temp.split()
+                #temp = [w for w in temp if not w in stopwords]
+                temp = " ".join(word for word in temp)
+                return temp
+
+       # tweets = [""]
+
+        hashtags = [clean_hashtags(ha) for ha in hashtags]
+	##################
+	'''
         return hashtags
         
     def find_mentions(self)->list:
@@ -171,11 +222,12 @@ class TweetDfExtractor:
         Return: the data file in csv format
         """
 
-        columns = ['created_at', 'source', 'original_text', 'polarity', 
+        columns = ['statuses_count','created_at', 'source', 'original_text', 'polarity', 
 	'subjectivity', 'lang', 'favourite_count', 'retweet_count', 
 	'original_author', 'followers_count', 'friends_count', 
 	'possibly_sensitive', 'hashtags', 'user_mentions', 'place']
 
+        statuses_count = self.find_statuses_count()
         created_at = self.find_created_time()
         source = self.find_source()
         text = self.find_full_text()
@@ -191,27 +243,32 @@ class TweetDfExtractor:
         mentions = self.find_mentions()
         location = self.find_location()
 
-        data = zip(created_at, source, text, polarity, subjectivity,
+        data = zip(statuses_count,created_at, source, text, polarity, subjectivity,
         lang, fav_count, retweet_count, screen_name, follower_count,
         friends_count, sensitivity, hashtags, mentions, location)
         df = pd.DataFrame(data=data, columns=columns)    
         
         if save:
-            df.to_csv('processed_tweet_data.csv', index=False)
-            print('File Successfully Saved.!!!')
+            #df.to_csv('data/global_processed_tweet_data.csv', index=False)
+            #print('File Successfully Saved.!!!')
 
+            df.to_csv('data/africa_processed_tweet_data.csv', index=False)
+            print('File Successfully Saved.!!!')
         return df
 
                 
 if __name__ == "__main__":
     	# required column to be generated you should be creative and add 
 	# more features
-    	columns = ['created_at', 'source', 'original_text', 'clean_text', 
+    	columns = ['statuses_count','created_at', 'source', 'original_text', 'clean_text', 
 	'sentiment', 'polarity', 'subjectivity', 'lang', 'favorite_count', 
 	'retweet_count', 'original_author', 'screen_count', 'followers_count', 
 	'friends_count', 'possibly_sensitive', 'hashtags', 'user_mentions', 
 	'place', 'place_coord_boundaries']
-    	_, tweet_list = read_json("/home/ayman/Desktop/10Academy/Week-0/data/global_twitter_data.json")
+    	#_, tweet_list = read_json("/home/ayman/Desktop/10Academy/Week-0/data/global_twitter_data.json")
+    	#tweet = TweetDfExtractor(tweet_list)
+    	#tweet_df = tweet.get_tweet_df() 
+    	_, tweet_list = read_json("/home/ayman/Desktop/10Academy/Week-0/data/africa_twitter_data.json")
     	tweet = TweetDfExtractor(tweet_list)
     	tweet_df = tweet.get_tweet_df() 
 
