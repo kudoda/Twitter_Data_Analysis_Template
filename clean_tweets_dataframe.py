@@ -1,4 +1,8 @@
 import pandas as pd
+import string
+import numpy as np
+import re
+from textblob import TextBlob
 
 
 
@@ -28,6 +32,7 @@ class Clean_Tweets:
         return:
         """
         self.df = df.drop_duplicates(subset='original_text')
+        
         return self.df
 
     def convert_to_datetime(self, df:pd.DataFrame)->pd.DataFrame:
@@ -61,17 +66,29 @@ class Clean_Tweets:
         return:
         """
         self.df = df.query("lang == 'en' ")
+
         return df
-
-
+        
+        
+        
+        
 if __name__ == "__main__":
-    tweet_df = pd.read_csv("./processed_tweet_data.csv")
+    tweet_df = pd.read_csv("/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/global_processed_tweet_data.csv")
+    #tweet_df = pd.read_csv("/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/africa_processed_tweet_data.csv")
     cleaner = Clean_Tweets(tweet_df)
     df = cleaner.drop_unwanted_column(cleaner.df)
     df = cleaner.drop_duplicate(df)
     df = cleaner.convert_to_numbers(df)
     df = cleaner.convert_to_datetime(df)
     df = cleaner.remove_non_english_tweets(df)
-
-    df.to_csv('cleaned_tweet_data.csv', index=False)
-    df.to_json('cleaned_tweet_data.json')
+    
+    df.to_csv('/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/global_clean_tweet_data.csv', index=False)
+    df.to_json('/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/global_clean_tweet_data.json')
+    
+    #df.to_csv('/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/africa_clean_tweet_data.csv', index=False)
+    #df.to_json('/home/ayman/Desktop/10Academy/Week-0-assignment/bugfix/Twitter_Data_Analysis_Template/data/africa_cleaned_tweet_data.json')
+   
+   
+   
+   
+   
